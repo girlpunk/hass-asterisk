@@ -20,6 +20,10 @@ REQUIREMENTS = ['pyst2==0.5.0']
 DATA_ASTERISK = 'asterisk'
 DATA_MONITOR = 'asterisk-monitor'
 DATA_MAILBOX = 'asterisk-mailbox'
+DATA_HOST = 'asterisk-host'
+DATA_PORT = 'asterisk-port'
+DATA_USERNAME = 'asterisk-username'
+DATA_PASSWORD = 'asterisk-password'
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
         vol.Required(CONF_HOST): cv.string,
@@ -40,6 +44,12 @@ def setup(hass, config):
     import asterisk.manager
     manager = asterisk.manager.Manager()
 
+    hass.data[DATA_HOST]     = config[DOMAIN].get(CONF_HOST, DEFAULT_HOST)
+    hass.data[DATA_PORT]     = config[DOMAIN].get(CONF_PORT, DEFAULT_PORT)
+    hass.data[DATA_USERNAME] = config[DOMAIN].get(CONF_USERNAME, DEFAULT_USERNAME)
+    hass.data[DATA_PASSWORD] = config[DOMAIN].get(CONF_PASSWORD, DEFAULT_PASSWORD)
+
+
     if not connect(hass):
         return False
 
@@ -52,14 +62,9 @@ def setup(hass, config):
     return True
 
 def connect(hass):
-    host = hass.config[DOMAIN].get(CONF_HOST, DEFAULT_HOST)
-    port = hass.config[DOMAIN].get(CONF_PORT, DEFAULT_PORT)
-    username = hass.config[DOMAIN].get(CONF_USERNAME, DEFAULT_USERNAME)
-    password = hass.config[DOMAIN].get(CONF_PASSWORD, DEFAULT_PASSWORD)
-
     try:
-        hass.data[DATA_ASTERISK].connect(host, port)
-        login_status = hass.data[DATA_ASTERISK].login(username=username, secret=password).get_header("Response")
+        hass.data[DATA_ASTERISK].connect(hass.data[DATA_HOST], hass.data[DATA_PORT])
+        login_status = hass.data[DATA_ASTERISK].login(username=hass.data[DATA_USERNAME], secret=hass.data[DATA_PASSWORD]).get_header("Response")
     except asterisk.manager.ManagerException as exception:
         _LOGGER.error("Error connecting to Asterisk: %s", exception.args[1])
         return False
