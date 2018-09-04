@@ -49,11 +49,6 @@ class AsteriskSensor(Entity):
             self._state = 'connected'
         else:
             self._state = 'disconnected'
-            try:
-                manager.connect(host, port)
-                login_status = manager.login(username=username, secret=password).get_header("Response")
-            except asterisk.manager.ManagerException as exception:
-                _LOGGER.error("Error connecting to Asterisk: %s", exception.args[1])
 
 
 class AsteriskExtension(Entity):
