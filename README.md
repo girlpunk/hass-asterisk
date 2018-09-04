@@ -13,6 +13,8 @@ asterisk_ami:
   - 100
   - 101
   - 102
+  mailboxes:
+  - 100@default
 ```
 
 The platform requires a matching entry in Asterisk's manager.conf or similar. For example:
