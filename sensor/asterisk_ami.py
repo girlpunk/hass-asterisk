@@ -4,9 +4,7 @@ import logging
 from homeassistant.const import STATE_UNKNOWN
 from homeassistant.helpers.entity import Entity
 
-DATA_ASTERISK = 'asterisk'
-DATA_MONITOR = 'asterisk-monitor'
-DATA_MAILBOX = 'asterisk-mailbox'
+from .. import asterisk_ami as ami_platform
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -15,9 +13,9 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
        Loads configuration and creates devices for extensions and mailboxes
     """
     add_devices([AsteriskSensor(hass)])
-    for extension in hass.data[DATA_MONITOR]:
+    for extension in hass.data[ami_platform.DATA_MONITOR]:
         add_devices([AsteriskExtension(hass, extension)])
-    for mailbox in hass.data[DATA_MAILBOX]:
+    for mailbox in hass.data[ami_platform.DATA_MAILBOX]:
         add_devices([AsteriskMailbox(hass, mailbox)])
 
 
@@ -45,10 +43,12 @@ class AsteriskSensor(Entity):
 
     def update(self):
         """Check the connection status and update the internal state"""
-        if self._hass.data[DATA_ASTERISK].connected():
+        if self._hass.data[ami_platform.DATA_ASTERISK].connected():
             self._state = 'connected'
         else:
             self._state = 'disconnected'
+
+            ami_platform.connect(self._hass)
 
 
 class AsteriskExtension(Entity):

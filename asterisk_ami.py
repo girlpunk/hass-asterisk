@@ -40,20 +40,8 @@ def setup(hass, config):
     import asterisk.manager
     manager = asterisk.manager.Manager()
 
-    host = config[DOMAIN].get(CONF_HOST, DEFAULT_HOST)
-    port = config[DOMAIN].get(CONF_PORT, DEFAULT_PORT)
-    username = config[DOMAIN].get(CONF_USERNAME, DEFAULT_USERNAME)
-    password = config[DOMAIN].get(CONF_PASSWORD, DEFAULT_PASSWORD)
-
-    try:
-        manager.connect(host, port)
-        login_status = manager.login(username=username, secret=password).get_header("Response")
-    except asterisk.manager.ManagerException as exception:
-        _LOGGER.error("Error connecting to Asterisk: %s", exception.args[1])
+    if not connect(hass):
         return False
-
-    if "Success" not in login_status:
-        _LOGGER.error("Could not authenticate: %s", login_status)
 
     hass.data[DATA_ASTERISK] = manager
     hass.data[DATA_MONITOR] = config[DOMAIN].get(CONF_MONITOR, [])
@@ -61,4 +49,22 @@ def setup(hass, config):
 
     load_platform(hass, 'sensor', DOMAIN)
 
+    return True
+
+def connect(hass):
+    host = hass.config[DOMAIN].get(CONF_HOST, DEFAULT_HOST)
+    port = hass.config[DOMAIN].get(CONF_PORT, DEFAULT_PORT)
+    username = hass.config[DOMAIN].get(CONF_USERNAME, DEFAULT_USERNAME)
+    password = hass.config[DOMAIN].get(CONF_PASSWORD, DEFAULT_PASSWORD)
+
+    try:
+        hass.data[DATA_ASTERISK].connect(host, port)
+        login_status = hass.data[DATA_ASTERISK].login(username=username, secret=password).get_header("Response")
+    except asterisk.manager.ManagerException as exception:
+        _LOGGER.error("Error connecting to Asterisk: %s", exception.args[1])
+        return False
+    if "Success" not in login_status:
+        _LOGGER.error("Could not authenticate: %s", login_status)
+        return False
+    _LOGGER.info("Successfully connected to Asterisk server")
     return True
