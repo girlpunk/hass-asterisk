@@ -1,0 +1,61 @@
+New Call, internal to external
+{
+  "Event": "Newstate",
+  "CallerIDNum": "100",
+  "ConnectedLineNum": "<unknown>",
+  "Exten": "07712345678",
+  "CallerIDName": "DECT Phone",
+  "Context": "from-internal",
+  "ChannelStateDesc": "Ring",
+  "Channel": "SIP/100-00000375"
+}
+
+Another new call, external to internal
+{
+  "Event": "Newstate",
+  "CallerIDNum": "07712345678",
+  "ConnectedLineNum": "+441234567890",
+  "Exten": "07712345678",
+  "CallerIDName": "CID:+441234567890",
+  "Context": "from-pstn",
+  "ChannelStateDesc": "Ringing",
+  "Channel": "SIP/Gamma-00000376"
+}
+
+Hangup events, both caused by different ends putting the phone down
+{
+  "Event": "Hangup",
+  "AccountCode": "",
+  "Cause": "16",
+  "ConnectedLineName": "<unknown>",
+  "CallerIDNum": "07712345678",
+  "Cause-txt": "Normal Clearing",
+  "Priority": "1",
+  "Uniqueid": "1536090442.5339",
+  "ConnectedLineNum": "+441234567890",
+  "Exten": "07712345678",
+  "CallerIDName": "CID:+441234567890",
+  "Context": "from-pstn",
+  "Privilege": "call,all",
+  "ChannelState": "5",
+  "ChannelStateDesc": "Ringing",
+  "Channel": "SIP/Gamma-00000376"
+}
+{
+  "Event": "Hangup",
+  "AccountCode": "",
+  "Cause": "16",
+  "ConnectedLineName": "CID:+441234567890",
+  "CallerIDNum": "+441234567890",
+  "Cause-txt": "Normal Clearing",
+  "Priority": "1",
+  "Uniqueid": "1536090441.5337",
+  "ConnectedLineNum": "07712345678",
+  "Exten": "h",
+  "CallerIDName": "<unknown>",
+  "Context": "from-internal",
+  "Privilege": "call,all",
+  "ChannelState": "4",
+  "ChannelStateDesc": "Ring",
+  "Channel": "SIP/100-00000375"
+}
